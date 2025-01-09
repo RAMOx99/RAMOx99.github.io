@@ -361,45 +361,163 @@ document.addEventListener('DOMContentLoaded', function() {
             background-color: rgba(var(--primary-color-rgb), 0.1);
             border: 2px solid var(--primary-color);
         }
+        
+        .cursor-clicking {
+            cursor: none;
+        }
+        
+        .cursor-clicking .cursor-dot {
+            transform: scale(0.5);
+            background-color: var(--secondary-color);
+        }
+        
+        .cursor-clicking .cursor-dot-outline {
+            transform: scale(0.5);
+            background-color: rgba(var(--secondary-color-rgb), 0.1);
+            border-color: var(--secondary-color);
+        }
+        
+        .cursor-hover {
+            cursor: none;
+        }
+        
+        .cursor-hover .cursor-dot {
+            transform: scale(1.2);
+            background-color: var(--secondary-color);
+        }
+        
+        .cursor-hover .cursor-dot-outline {
+            transform: scale(1.2);
+            background-color: rgba(var(--secondary-color-rgb), 0.1);
+            border-color: var(--secondary-color);
+        }
     `;
     document.head.appendChild(style);
 
-    // Mouse cursor effect
-const cursor = {
-    dot: document.createElement('div'),
-    dotOutline: document.createElement('div'),
-    init: function() {
-        // Only initialize if it's not a touch device
-        if (isTouchDevice()) {
-            return; // Exit if it's a touch device
-        }
-
-        this.dot.classList.add('cursor-dot');
-        this.dotOutline.classList.add('cursor-dot-outline');
-        document.body.appendChild(this.dot);
-        document.body.appendChild(this.dotOutline);
-
-        this.cursorVisible = true;
-        this.cursorEnlarged = false;
-
-        this.endX = window.innerWidth / 2;
-        this.endY = window.innerHeight / 2;
-        this.dotX = this.endX;
-        this.dotY = this.endY;
-        this.dotOutlineX = this.endX;
-        this.dotOutlineY = this.endY;
-
-        this.setupEventListeners();
-        this.animateDotOutline();
+    // Cursor effect
+    const cursor = {
+        dot: document.createElement('div'),
+        dotOutline: document.createElement('div'),
+        cursorVisible: false,
+        isMobile: false,
         
-        // Show cursor when initialization is complete
-        setTimeout(() => {
-            this.dot.style.opacity = 1;
-            this.dotOutline.style.opacity = 1;
-        }, 500);
-    },
-    // ... rest of the cursor object methods remain the same
-};
+        init: function() {
+            // Check if device is mobile
+            this.isMobile = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+            
+            // Create cursor elements
+            this.dot.className = 'cursor-dot';
+            this.dotOutline.className = 'cursor-dot-outline';
+            document.body.appendChild(this.dot);
+            document.body.appendChild(this.dotOutline);
+            
+            if (!this.isMobile) {
+                // Desktop mouse events
+                document.addEventListener('mousemove', (e) => {
+                    this.cursorVisible = true;
+                    this.moveCursor(e);
+                });
+                
+                document.addEventListener('mouseenter', () => {
+                    this.cursorVisible = true;
+                    this.toggleCursorVisibility();
+                });
+                
+                document.addEventListener('mouseleave', () => {
+                    this.cursorVisible = false;
+                    this.toggleCursorVisibility();
+                });
+                
+                // Click animation
+                document.addEventListener('mousedown', () => {
+                    document.body.classList.add('cursor-clicking');
+                });
+                
+                document.addEventListener('mouseup', () => {
+                    document.body.classList.remove('cursor-clicking');
+                });
+                
+                // Hover animations for interactive elements
+                const interactiveElements = document.querySelectorAll('a, button, input, select, textarea, [role="button"]');
+                interactiveElements.forEach(el => {
+                    el.addEventListener('mouseenter', () => {
+                        document.body.classList.add('cursor-hover');
+                    });
+                    
+                    el.addEventListener('mouseleave', () => {
+                        document.body.classList.remove('cursor-hover');
+                    });
+                });
+            } else {
+                // Mobile touch events
+                let touchTimeout;
+                
+                document.addEventListener('touchstart', (e) => {
+                    clearTimeout(touchTimeout);
+                    this.showTouchCursor(e.touches[0]);
+                });
+                
+                document.addEventListener('touchmove', (e) => {
+                    e.preventDefault(); // Prevent scrolling while touching
+                    clearTimeout(touchTimeout);
+                    this.showTouchCursor(e.touches[0]);
+                });
+                
+                document.addEventListener('touchend', () => {
+                    clearTimeout(touchTimeout);
+                    touchTimeout = setTimeout(() => {
+                        this.hideTouchCursor();
+                    }, 100);
+                });
+            }
+            
+            // Show initial cursor if on desktop
+            if (!this.isMobile) {
+                this.toggleCursorVisibility();
+            }
+        },
+        
+        moveCursor: function(e) {
+            const x = e.clientX;
+            const y = e.clientY;
+            
+            requestAnimationFrame(() => {
+                this.dot.style.left = x + 'px';
+                this.dot.style.top = y + 'px';
+                
+                // Add slight delay to outline for smooth effect
+                setTimeout(() => {
+                    this.dotOutline.style.left = x + 'px';
+                    this.dotOutline.style.top = y + 'px';
+                }, 50);
+            });
+        },
+        
+        toggleCursorVisibility: function() {
+            this.dot.style.opacity = this.cursorVisible ? 1 : 0;
+            this.dotOutline.style.opacity = this.cursorVisible ? 1 : 0;
+        },
+        
+        showTouchCursor: function(touch) {
+            const x = touch.clientX;
+            const y = touch.clientY;
+            
+            this.dot.classList.add('touch-active');
+            this.dotOutline.classList.add('touch-active');
+            
+            requestAnimationFrame(() => {
+                this.dot.style.left = x + 'px';
+                this.dot.style.top = y + 'px';
+                this.dotOutline.style.left = x + 'px';
+                this.dotOutline.style.top = y + 'px';
+            });
+        },
+        
+        hideTouchCursor: function() {
+            this.dot.classList.remove('touch-active');
+            this.dotOutline.classList.remove('touch-active');
+        }
+    };
 
     // Initialize cursor effect
     cursor.init();

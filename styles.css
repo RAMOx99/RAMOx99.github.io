@@ -507,17 +507,14 @@ body::before {
     color: var(--primary-color);
 }
 
-/* ADD THIS BLOCK */
+/* Cursor Effects */
 .cursor-dot,
 .cursor-dot-outline {
     pointer-events: none;
     position: fixed;
-    top: 50%;
-    left: 50%;
+    transform: translate(-50%, -50%);
     border-radius: 50%;
     opacity: 0;
-    transform: translate(-50%, -50%);
-    transition: opacity 0.3s ease-in-out;
     z-index: 9999;
 }
 
@@ -525,6 +522,10 @@ body::before {
     width: 8px;
     height: 8px;
     background-color: var(--primary-color);
+    transition: width 0.2s ease-in-out,
+                height 0.2s ease-in-out,
+                opacity 0.2s ease-in-out,
+                transform 0.1s ease-out;
 }
 
 .cursor-dot-outline {
@@ -532,11 +533,95 @@ body::before {
     height: 40px;
     background-color: rgba(var(--primary-color-rgb), 0.1);
     border: 2px solid var(--primary-color);
+    transition: width 0.2s ease-in-out,
+                height 0.2s ease-in-out,
+                opacity 0.2s ease-in-out,
+                transform 0.15s ease-out;
 }
 
-@keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
+/* Hide real cursor on desktop */
+@media (hover: hover) and (pointer: fine) {
+    * {
+        cursor: none !important;
+    }
+}
+
+/* Cursor hover effects */
+.cursor-hover .cursor-dot {
+    transform: translate(-50%, -50%) scale(1.5);
+    background-color: #fff;
+}
+
+.cursor-hover .cursor-dot-outline {
+    transform: translate(-50%, -50%) scale(1.8);
+    background-color: rgba(var(--primary-color-rgb), 0.3);
+}
+
+/* Cursor click animation */
+.cursor-clicking .cursor-dot {
+    transform: translate(-50%, -50%) scale(0.5);
+}
+
+.cursor-clicking .cursor-dot-outline {
+    transform: translate(-50%, -50%) scale(0.7);
+}
+
+/* Mobile cursor effects */
+@media (hover: none) and (pointer: coarse) {
+    * {
+        cursor: auto !important;
+    }
+    
+    .cursor-dot,
+    .cursor-dot-outline {
+        display: none;
+    }
+    
+    .cursor-dot.touch-active,
+    .cursor-dot-outline.touch-active {
+        display: block;
+        opacity: 1;
+    }
+    
+    .cursor-dot-outline.touch-active {
+        width: 80px;
+        height: 80px;
+        background-color: rgba(var(--primary-color-rgb), 0.2);
+        animation: touchPulse 1s ease-in-out infinite;
+    }
+    
+    .cursor-dot.touch-active {
+        width: 16px;
+        height: 16px;
+        animation: touchDotPulse 1s ease-in-out infinite;
+    }
+}
+
+@keyframes touchPulse {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.5);
+        opacity: 0.5;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes touchDotPulse {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
 }
 
 .hero-description {
