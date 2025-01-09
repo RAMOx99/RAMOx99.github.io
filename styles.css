@@ -544,123 +544,110 @@ body::before {
     color: var(--primary-color);
 }
 
+/* Hide default cursor */
+* {
+    cursor: none !important;
+}
+
+/* Only show default cursor on touch devices */
+@media (hover: none) and (pointer: coarse) {
+    * {
+        cursor: auto !important;
+    }
+}
+
 /* Cursor Effects */
 .cursor-dot,
 .cursor-dot-outline {
     pointer-events: none;
     position: fixed;
+    top: 0;
+    left: 0;
     transform: translate(-50%, -50%);
     border-radius: 50%;
-    opacity: 0;
-    z-index: 9999;
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out;
 }
 
 .cursor-dot {
     width: 8px;
     height: 8px;
-    background-color: var(--primary-color);
-    transition: width 0.2s ease-in-out,
-                height 0.2s ease-in-out,
-                opacity 0.2s ease-in-out,
-                transform 0.1s ease-out;
+    background: var(--primary-color);
+    z-index: 1001;
 }
 
 .cursor-dot-outline {
     width: 40px;
     height: 40px;
-    background-color: rgba(var(--primary-color-rgb), 0.1);
-    border: 2px solid var(--primary-color);
-    transition: width 0.2s ease-in-out,
-                height 0.2s ease-in-out,
-                opacity 0.2s ease-in-out,
-                transform 0.15s ease-out;
-}
-
-/* Hide real cursor on desktop */
-@media (hover: hover) and (pointer: fine) {
-    * {
-        cursor: none !important;
-    }
+    background: rgba(var(--primary-rgb), 0.1);
+    z-index: 1000;
+    transition: transform 0.2s ease-in-out;
 }
 
 /* Cursor hover effects */
-.cursor-hover .cursor-dot {
-    transform: translate(-50%, -50%) scale(1.5);
-    background-color: #fff;
+.clickable {
+    cursor: none;
 }
 
-.cursor-hover .cursor-dot-outline {
-    transform: translate(-50%, -50%) scale(1.8);
-    background-color: rgba(var(--primary-color-rgb), 0.3);
-}
-
-/* Cursor click animation */
-.cursor-clicking .cursor-dot {
-    transform: translate(-50%, -50%) scale(0.5);
-}
-
-.cursor-clicking .cursor-dot-outline {
+.clickable:hover ~ .cursor-dot {
     transform: translate(-50%, -50%) scale(0.7);
+    background: var(--primary-color);
 }
 
-/* Mobile cursor effects */
+.clickable:hover ~ .cursor-dot-outline {
+    transform: translate(-50%, -50%) scale(1.5);
+    background: rgba(var(--primary-rgb), 0.2);
+}
+
+/* Cursor click effect */
+.cursor-click .cursor-dot {
+    transform: translate(-50%, -50%) scale(0.5);
+    background: var(--primary-color);
+    transition: transform 0.1s ease-in-out;
+}
+
+.cursor-click .cursor-dot-outline {
+    transform: translate(-50%, -50%) scale(0.7);
+    background: rgba(var(--primary-rgb), 0.4);
+    transition: transform 0.1s ease-in-out;
+}
+
+/* Hide cursor on touch devices */
 @media (hover: none) and (pointer: coarse) {
-    * {
-        cursor: auto !important;
-    }
-    
     .cursor-dot,
     .cursor-dot-outline {
         display: none;
     }
-    
-    .cursor-dot.touch-active,
-    .cursor-dot-outline.touch-active {
-        display: block;
-        opacity: 1;
-    }
-    
-    .cursor-dot-outline.touch-active {
-        width: 80px;
-        height: 80px;
-        background-color: rgba(var(--primary-color-rgb), 0.2);
-        animation: touchPulse 1s ease-in-out infinite;
-    }
-    
-    .cursor-dot.touch-active {
-        width: 16px;
-        height: 16px;
-        animation: touchDotPulse 1s ease-in-out infinite;
-    }
 }
 
-@keyframes touchPulse {
-    0% {
-        transform: translate(-50%, -50%) scale(1);
-        opacity: 1;
-    }
-    50% {
-        transform: translate(-50%, -50%) scale(1.5);
-        opacity: 0.5;
-    }
-    100% {
-        transform: translate(-50%, -50%) scale(1);
-        opacity: 1;
-    }
+/* Add hover effect to all interactive elements */
+a, button, input, select, textarea, .nav-toggle, .theme-toggle {
+    cursor: none;
 }
 
-@keyframes touchDotPulse {
-    0% {
-        transform: translate(-50%, -50%) scale(1);
-    }
-    50% {
-        transform: translate(-50%, -50%) scale(0.8);
-    }
-    100% {
-        transform: translate(-50%, -50%) scale(1);
-    }
+a:hover ~ .cursor-dot,
+button:hover ~ .cursor-dot,
+input:hover ~ .cursor-dot,
+select:hover ~ .cursor-dot,
+textarea:hover ~ .cursor-dot,
+.nav-toggle:hover ~ .cursor-dot,
+.theme-toggle:hover ~ .cursor-dot {
+    transform: translate(-50%, -50%) scale(1.5);
+    background: var(--primary-color);
 }
 
+a:hover ~ .cursor-dot-outline,
+button:hover ~ .cursor-dot-outline,
+input:hover ~ .cursor-dot-outline,
+select:hover ~ .cursor-dot-outline,
+textarea:hover ~ .cursor-dot-outline,
+.nav-toggle:hover ~ .cursor-dot-outline,
+.theme-toggle:hover ~ .cursor-dot-outline {
+    transform: translate(-50%, -50%) scale(1.8);
+    background: rgba(var(--primary-rgb), 0.3);
+}
+
+/* Hero Description */
 .hero-description {
     font-size: 1.1rem;
     color: var(--text-secondary);

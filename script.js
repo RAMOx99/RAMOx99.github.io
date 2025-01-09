@@ -401,194 +401,130 @@ document.addEventListener('DOMContentLoaded', function() {
     `;
     document.head.appendChild(style);
 
-    // Cursor effect
+    // Custom Cursor
     const cursor = {
         dot: document.createElement('div'),
         dotOutline: document.createElement('div'),
-        cursorVisible: false,
-        isMobile: false,
+        cursorVisible: true,
+        cursorEnlarged: false,
         
         init: function() {
-            // Check if device is mobile
-            this.isMobile = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
-            
             // Create cursor elements
-            this.dot.className = 'cursor-dot';
-            this.dotOutline.className = 'cursor-dot-outline';
+            this.dot.classList.add('cursor-dot');
+            this.dotOutline.classList.add('cursor-dot-outline');
             document.body.appendChild(this.dot);
             document.body.appendChild(this.dotOutline);
+
+            // Variables
+            this.endX = window.innerWidth / 2;
+            this.endY = window.innerHeight / 2;
+            this.cursorVisible = true;
+            this.cursorEnlarged = false;
+
+            // Event Listeners
+            document.addEventListener('mousemove', e => this.cursorMove(e));
+            document.addEventListener('mouseenter', e => this.cursorEnter(e));
+            document.addEventListener('mouseleave', e => this.cursorLeave(e));
+            document.addEventListener('mousedown', e => this.cursorDown(e));
+            document.addEventListener('mouseup', e => this.cursorUp(e));
+
+            // Add hover listeners
+            const clickables = document.querySelectorAll(
+                'a, button, input, textarea, select, .nav-toggle, .theme-toggle'
+            );
             
-            if (!this.isMobile) {
-                // Desktop mouse events
-                document.addEventListener('mousemove', (e) => {
-                    this.cursorVisible = true;
-                    this.moveCursor(e);
-                });
-                
-                document.addEventListener('mouseenter', () => {
-                    this.cursorVisible = true;
-                    this.toggleCursorVisibility();
-                });
-                
-                document.addEventListener('mouseleave', () => {
-                    this.cursorVisible = false;
-                    this.toggleCursorVisibility();
-                });
-                
-                // Click animation
-                document.addEventListener('mousedown', () => {
-                    document.body.classList.add('cursor-clicking');
-                });
-                
-                document.addEventListener('mouseup', () => {
-                    document.body.classList.remove('cursor-clicking');
-                });
-                
-                // Hover animations for interactive elements
-                const interactiveElements = document.querySelectorAll('a, button, input, select, textarea, [role="button"]');
-                interactiveElements.forEach(el => {
-                    el.addEventListener('mouseenter', () => {
-                        document.body.classList.add('cursor-hover');
-                    });
-                    
-                    el.addEventListener('mouseleave', () => {
-                        document.body.classList.remove('cursor-hover');
-                    });
-                });
-            } else {
-                // Mobile touch events
-                let touchTimeout;
-                
-                document.addEventListener('touchstart', (e) => {
-                    clearTimeout(touchTimeout);
-                    this.showTouchCursor(e.touches[0]);
-                });
-                
-                document.addEventListener('touchmove', (e) => {
-                    e.preventDefault(); // Prevent scrolling while touching
-                    clearTimeout(touchTimeout);
-                    this.showTouchCursor(e.touches[0]);
-                });
-                
-                document.addEventListener('touchend', () => {
-                    clearTimeout(touchTimeout);
-                    touchTimeout = setTimeout(() => {
-                        this.hideTouchCursor();
-                    }, 100);
-                });
-            }
-            
-            // Show initial cursor if on desktop
-            if (!this.isMobile) {
-                this.toggleCursorVisibility();
-            }
-        },
-        
-        moveCursor: function(e) {
-            const x = e.clientX;
-            const y = e.clientY;
-            
-            requestAnimationFrame(() => {
-                this.dot.style.left = x + 'px';
-                this.dot.style.top = y + 'px';
-                
-                // Add slight delay to outline for smooth effect
-                setTimeout(() => {
-                    this.dotOutline.style.left = x + 'px';
-                    this.dotOutline.style.top = y + 'px';
-                }, 50);
+            clickables.forEach(el => {
+                el.addEventListener('mouseover', () => this.cursorEnlarge());
+                el.addEventListener('mouseout', () => this.cursorShrink());
             });
+
+            // Start the animation loop
+            requestAnimationFrame(() => this.render());
         },
-        
+
+        cursorMove: function(e) {
+            this.endX = e.clientX;
+            this.endY = e.clientY;
+            this.dot.style.top = this.endY + 'px';
+            this.dot.style.left = this.endX + 'px';
+        },
+
+        cursorEnter: function(e) {
+            this.cursorVisible = true;
+            this.toggleCursorVisibility();
+        },
+
+        cursorLeave: function(e) {
+            this.cursorVisible = false;
+            this.toggleCursorVisibility();
+        },
+
+        cursorDown: function(e) {
+            this.cursorEnlarged = true;
+            this.toggleCursorSize();
+        },
+
+        cursorUp: function(e) {
+            this.cursorEnlarged = false;
+            this.toggleCursorSize();
+        },
+
+        cursorEnlarge: function() {
+            this.cursorEnlarged = true;
+            this.toggleCursorSize();
+        },
+
+        cursorShrink: function() {
+            this.cursorEnlarged = false;
+            this.toggleCursorSize();
+        },
+
         toggleCursorVisibility: function() {
-            this.dot.style.opacity = this.cursorVisible ? 1 : 0;
-            this.dotOutline.style.opacity = this.cursorVisible ? 1 : 0;
+            if (this.cursorVisible) {
+                this.dot.style.opacity = 1;
+                this.dotOutline.style.opacity = 1;
+            } else {
+                this.dot.style.opacity = 0;
+                this.dotOutline.style.opacity = 0;
+            }
         },
-        
-        showTouchCursor: function(touch) {
-            const x = touch.clientX;
-            const y = touch.clientY;
-            
-            this.dot.classList.add('touch-active');
-            this.dotOutline.classList.add('touch-active');
-            
-            requestAnimationFrame(() => {
-                this.dot.style.left = x + 'px';
-                this.dot.style.top = y + 'px';
-                this.dotOutline.style.left = x + 'px';
-                this.dotOutline.style.top = y + 'px';
-            });
+
+        toggleCursorSize: function() {
+            if (this.cursorEnlarged) {
+                this.dot.classList.add('cursor-click');
+                this.dotOutline.classList.add('cursor-click');
+            } else {
+                this.dot.classList.remove('cursor-click');
+                this.dotOutline.classList.remove('cursor-click');
+            }
         },
-        
-        hideTouchCursor: function() {
-            this.dot.classList.remove('touch-active');
-            this.dotOutline.classList.remove('touch-active');
+
+        render: function() {
+            const targetX = this.endX;
+            const targetY = this.endY;
+            const currentX = parseFloat(this.dotOutline.style.left) || targetX;
+            const currentY = parseFloat(this.dotOutline.style.top) || targetY;
+            
+            const deltaX = targetX - currentX;
+            const deltaY = targetY - currentY;
+            
+            this.dotOutline.style.left = currentX + (deltaX * 0.2) + 'px';
+            this.dotOutline.style.top = currentY + (deltaY * 0.2) + 'px';
+            
+            requestAnimationFrame(() => this.render());
         }
     };
 
     // Initialize cursor effect
     cursor.init();
 
-    // Auto Scroll Button
-    const autoScrollBtn = document.getElementById('autoScrollBtn');
-    let isScrolling = false;
-    let scrollInterval;
-    let scrollSpeed = 2; // pixels per interval
-
-    function startAutoScroll() {
-        if (!isScrolling) {
-            isScrolling = true;
-            autoScrollBtn.classList.add('scrolling');
-            scrollInterval = setInterval(() => {
-                window.scrollBy({
-                    top: scrollSpeed,
-                    behavior: 'auto'
-                });
-
-                // Check if we've reached the bottom
-                if ((window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight) {
-                    stopAutoScroll();
-                }
-            }, 10);
-        }
-    }
-
-    function stopAutoScroll() {
-        if (isScrolling) {
-            isScrolling = false;
-            autoScrollBtn.classList.remove('scrolling');
-            clearInterval(scrollInterval);
-        }
-    }
-    
-    // Touch events for mobile
-    autoScrollBtn.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        startAutoScroll();
+    // Initialize scroll animations
+    window.addEventListener('scroll', () => {
+        // Add any scroll animations here if needed
     });
 
-    autoScrollBtn.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        stopAutoScroll();
-    });
-
-    // Mouse events for desktop
-    autoScrollBtn.addEventListener('mousedown', startAutoScroll);
-    autoScrollBtn.addEventListener('mouseup', stopAutoScroll);
-    autoScrollBtn.addEventListener('mouseleave', stopAutoScroll);
-
-    // Stop scrolling when user manually scrolls
-    document.addEventListener('wheel', stopAutoScroll);
-    document.addEventListener('touchmove', stopAutoScroll);
-
-    // Adjust scroll speed based on page height
-    function updateScrollSpeed() {
-        const pageHeight = document.documentElement.scrollHeight;
-        scrollSpeed = Math.max(1, Math.min(5, pageHeight / 5000));
-    }
-
-    window.addEventListener('resize', updateScrollSpeed);
-    updateScrollSpeed(); // Initial speed calculation
+    // Show notification system
+    showNotification('Welcome to my portfolio!', 'success');
 
     // Notification System
     function showNotification(message, type = 'success') {
