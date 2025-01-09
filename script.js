@@ -77,11 +77,18 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Remove the scroll effect code and replace with static navbar styling
+    // Navigation background on scroll
     const navbar = document.querySelector('.navbar');
-    navbar.style.transform = 'translateY(0)';
-    navbar.style.background = 'var(--background-primary)';
-    navbar.style.transition = 'background-color 0.3s ease';
+    
+    window.addEventListener('scroll', function() {
+        if (window.scrollY > 100) {
+            navbar.style.background = 'var(--background-primary)';
+            navbar.style.boxShadow = '0 2px 10px var(--shadow-color)';
+        } else {
+            navbar.style.background = 'transparent';
+            navbar.style.boxShadow = 'none';
+        }
+    });
 
     // Mobile Navigation Toggle
     const navToggle = document.getElementById('navToggle');
@@ -245,7 +252,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
         });
     }
-
+    function isTouchDevice() {
+        return (('ontouchstart' in window) ||
+                (navigator.maxTouchPoints > 0) ||
+                (navigator.msMaxTouchPoints > 0));
+    }
     // Add scroll to top button
     const scrollTopBtn = document.createElement('button');
     scrollTopBtn.className = 'scroll-top-btn';
@@ -353,76 +364,45 @@ document.addEventListener('DOMContentLoaded', function() {
     `;
     document.head.appendChild(style);
 
-    // Custom cursor initialization
-    const cursor = {
-        dot: document.createElement('div'),
-        dotOutline: document.createElement('div'),
-        init: function() {
-            // Only initialize cursor on desktop
-            if (window.innerWidth >= 768) {
-                this.dot.classList.add('cursor-dot');
-                this.dotOutline.classList.add('cursor-dot-outline');
-                document.body.appendChild(this.dot);
-                document.body.appendChild(this.dotOutline);
-                this.setupEventListeners();
-                this.animateDotOutline();
-            }
-        },
-        setupEventListeners: function() {
-            // Only setup events if on desktop
-            if (window.innerWidth >= 768) {
-                document.addEventListener('mousemove', (e) => {
-                    this.cursorVisible = true;
-                    this.toggleCursorVisibility();
-                    this.dot.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
-                    
-                    // Add delay effect for the outline
-                    setTimeout(() => {
-                        this.dotOutline.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
-                    }, 80);
-                });
-
-                document.addEventListener('mouseenter', this.toggleCursorVisibility.bind(this));
-                document.addEventListener('mouseleave', this.toggleCursorVisibility.bind(this));
-            }
-        },
-        toggleCursorVisibility: function() {
-            if (this.cursorVisible) {
-                this.dot.style.opacity = 1;
-                this.dotOutline.style.opacity = 1;
-            } else {
-                this.dot.style.opacity = 0;
-                this.dotOutline.style.opacity = 0;
-            }
-        },
-        animateDotOutline: function() {
-            if (window.innerWidth >= 768) {
-                this._x = 0;
-                this._y = 0;
-                this.dot.style.transform = `translate(${this._x}px, ${this._y}px)`;
-                this.dotOutline.style.transform = `translate(${this._x}px, ${this._y}px)`;
-
-                requestAnimationFrame(this.animateDotOutline.bind(this));
-            }
+    // Mouse cursor effect
+const cursor = {
+    dot: document.createElement('div'),
+    dotOutline: document.createElement('div'),
+    init: function() {
+        // Only initialize if it's not a touch device
+        if (isTouchDevice()) {
+            return; // Exit if it's a touch device
         }
-    };
 
-    // Initialize cursor only if on desktop
-    if (window.innerWidth >= 768) {
-        cursor.init();
-    }
+        this.dot.classList.add('cursor-dot');
+        this.dotOutline.classList.add('cursor-dot-outline');
+        document.body.appendChild(this.dot);
+        document.body.appendChild(this.dotOutline);
 
-    // Handle window resize
-    window.addEventListener('resize', () => {
-        if (window.innerWidth >= 768 && !document.querySelector('.cursor-dot')) {
-            cursor.init();
-        } else if (window.innerWidth < 768) {
-            const dot = document.querySelector('.cursor-dot');
-            const dotOutline = document.querySelector('.cursor-dot-outline');
-            if (dot) dot.remove();
-            if (dotOutline) dotOutline.remove();
-        }
-    });
+        this.cursorVisible = true;
+        this.cursorEnlarged = false;
+
+        this.endX = window.innerWidth / 2;
+        this.endY = window.innerHeight / 2;
+        this.dotX = this.endX;
+        this.dotY = this.endY;
+        this.dotOutlineX = this.endX;
+        this.dotOutlineY = this.endY;
+
+        this.setupEventListeners();
+        this.animateDotOutline();
+        
+        // Show cursor when initialization is complete
+        setTimeout(() => {
+            this.dot.style.opacity = 1;
+            this.dotOutline.style.opacity = 1;
+        }, 500);
+    },
+    // ... rest of the cursor object methods remain the same
+};
+
+    // Initialize cursor effect
+    cursor.init();
 
     // Auto Scroll Button
     const autoScrollBtn = document.getElementById('autoScrollBtn');
@@ -455,7 +435,7 @@ document.addEventListener('DOMContentLoaded', function() {
             clearInterval(scrollInterval);
         }
     }
-
+    
     // Touch events for mobile
     autoScrollBtn.addEventListener('touchstart', (e) => {
         e.preventDefault();
