@@ -298,100 +298,94 @@ body::before {
 }
 
 /* Mobile Navigation Styles */
-.nav-toggle {
-    display: none;
-    cursor: pointer;
-    width: 30px;
-    height: 24px;
-    position: relative;
-    z-index: 1001;
-    padding: 10px;
-    margin: -10px;
-    background: none;
-    border: none;
-    outline: none;
-}
-
-.nav-toggle span {
-    display: block;
-    position: absolute;
-    height: 3px;
-    width: 100%;
-    background: var(--text-primary);
-    border-radius: 3px;
-    transition: all 0.3s ease;
-    pointer-events: none;
-}
-
-.nav-toggle span:nth-child(1) { top: 0; }
-.nav-toggle span:nth-child(2) { top: 10px; }
-.nav-toggle span:nth-child(3) { top: 20px; }
-
-/* Mobile Navigation Animation */
-.nav-toggle.active span:nth-child(1) {
-    top: 10px;
-    transform: rotate(45deg);
-}
-
-.nav-toggle.active span:nth-child(2) {
-    opacity: 0;
-}
-
-.nav-toggle.active span:nth-child(3) {
-    top: 10px;
-    transform: rotate(-45deg);
-}
-
 @media (max-width: 768px) {
-    .nav-toggle {
-        display: block;
+    .nav-container {
         position: relative;
-        z-index: 1002;
     }
 
     .nav-elements {
-        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .nav-toggle {
+        display: block;
+        margin-left: 20px;
     }
 
     .nav-links {
-        position: fixed;
-        top: 0;
-        right: -100%;
-        height: 100vh;
-        width: 100%;
-        max-width: 300px;
+        display: none;
+        position: absolute;
+        top: 100%;
+        right: -2rem;
         background: var(--background-primary);
+        width: 250px;
         flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 80px 40px;
-        transition: right 0.3s ease;
-        box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
-        z-index: 1001;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: all 0.3s ease;
     }
 
     .nav-links.active {
-        right: 0;
+        display: flex;
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
     }
 
     .nav-links li {
-        margin: 15px 0;
         width: 100%;
-        text-align: center;
+        margin: 10px 0;
     }
 
     .nav-links li a {
-        font-size: 1.2rem;
-        padding: 10px;
         display: block;
-        width: 100%;
+        padding: 10px;
+        text-align: center;
+        font-size: 1.1rem;
     }
 
-    /* Ensure the theme toggle is visible */
+    /* Ensure the theme toggle and nav toggle are properly spaced */
     .theme-toggle {
-        position: relative;
-        z-index: 1002;
-        margin-right: 20px;
+        margin-right: 15px;
+    }
+
+    .nav-toggle {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 30px;
+        height: 21px;
+        cursor: pointer;
+        padding: 0;
+        background: none;
+        border: none;
+        z-index: 100;
+    }
+
+    .nav-toggle span {
+        display: block;
+        width: 100%;
+        height: 3px;
+        background-color: var(--text-primary);
+        border-radius: 3px;
+        transition: all 0.3s ease;
+    }
+
+    .nav-toggle.active span:nth-child(1) {
+        transform: translateY(9px) rotate(45deg);
+    }
+
+    .nav-toggle.active span:nth-child(2) {
+        opacity: 0;
+    }
+
+    .nav-toggle.active span:nth-child(3) {
+        transform: translateY(-9px) rotate(-45deg);
     }
 }
 

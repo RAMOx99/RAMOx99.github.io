@@ -93,38 +93,35 @@ document.addEventListener('DOMContentLoaded', function() {
     // Mobile Navigation Toggle
     const navToggle = document.getElementById('navToggle');
     const navLinks = document.querySelector('.nav-links');
-    
-    // Prevent touch event conflicts
-    navToggle.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        navToggle.classList.toggle('active');
-        navLinks.classList.toggle('active');
-    });
+    let menuOpen = false;
 
-    navToggle.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
+    function toggleMenu(e) {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        menuOpen = !menuOpen;
         navToggle.classList.toggle('active');
         navLinks.classList.toggle('active');
-    });
+    }
+
+    // Add both click and touch events
+    navToggle.addEventListener('click', toggleMenu);
+    navToggle.addEventListener('touchend', toggleMenu, { passive: false });
 
     // Close mobile menu when clicking on a link
     document.querySelectorAll('.nav-links a').forEach(link => {
         link.addEventListener('click', () => {
-            navToggle.classList.remove('active');
-            navLinks.classList.remove('active');
+            if (menuOpen) {
+                toggleMenu();
+            }
         });
     });
 
     // Close mobile menu when clicking outside
     document.addEventListener('click', (e) => {
-        const isClickInsideNav = navLinks.contains(e.target);
-        const isClickOnToggle = navToggle.contains(e.target);
-        
-        if (!isClickInsideNav && !isClickOnToggle && navLinks.classList.contains('active')) {
-            navToggle.classList.remove('active');
-            navLinks.classList.remove('active');
+        if (menuOpen && !navToggle.contains(e.target) && !navLinks.contains(e.target)) {
+            toggleMenu();
         }
     });
 
