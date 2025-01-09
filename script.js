@@ -353,54 +353,38 @@ document.addEventListener('DOMContentLoaded', function() {
     `;
     document.head.appendChild(style);
 
-    // Mouse cursor effect
+    // Custom cursor initialization
     const cursor = {
         dot: document.createElement('div'),
         dotOutline: document.createElement('div'),
         init: function() {
-            this.dot.classList.add('cursor-dot');
-            this.dotOutline.classList.add('cursor-dot-outline');
-            document.body.appendChild(this.dot);
-            document.body.appendChild(this.dotOutline);
-
-            this.cursorVisible = true;
-            this.cursorEnlarged = false;
-
-            this.endX = window.innerWidth / 2;
-            this.endY = window.innerHeight / 2;
-            this.dotX = this.endX;
-            this.dotY = this.endY;
-            this.dotOutlineX = this.endX;
-            this.dotOutlineY = this.endY;
-
-            this.setupEventListeners();
-            this.animateDotOutline();
-            
-            // Show cursor when initialization is complete
-            setTimeout(() => {
-                this.dot.style.opacity = 1;
-                this.dotOutline.style.opacity = 1;
-            }, 500);
+            // Only initialize cursor on desktop
+            if (window.innerWidth >= 768) {
+                this.dot.classList.add('cursor-dot');
+                this.dotOutline.classList.add('cursor-dot-outline');
+                document.body.appendChild(this.dot);
+                document.body.appendChild(this.dotOutline);
+                this.setupEventListeners();
+                this.animateDotOutline();
+            }
         },
         setupEventListeners: function() {
-            document.addEventListener('mousemove', e => {
-                this.cursorVisible = true;
-                this.toggleCursorVisibility();
-                this.endX = e.clientX;
-                this.endY = e.clientY;
-                this.dot.style.top = this.endY + 'px';
-                this.dot.style.left = this.endX + 'px';
-            });
-            document.addEventListener('mouseenter', this.toggleCursorVisibility.bind(this));
-            document.addEventListener('mouseleave', this.toggleCursorVisibility.bind(this));
-            document.addEventListener('mousedown', this.cursorEnlarge.bind(this));
-            document.addEventListener('mouseup', this.cursorEnlarge.bind(this));
+            // Only setup events if on desktop
+            if (window.innerWidth >= 768) {
+                document.addEventListener('mousemove', (e) => {
+                    this.cursorVisible = true;
+                    this.toggleCursorVisibility();
+                    this.dot.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+                    
+                    // Add delay effect for the outline
+                    setTimeout(() => {
+                        this.dotOutline.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+                    }, 80);
+                });
 
-            // Add hover effect for clickable elements
-            document.querySelectorAll('a, button, .btn, input[type="submit"]').forEach(el => {
-                el.addEventListener('mouseover', this.cursorEnlarge.bind(this));
-                el.addEventListener('mouseout', this.cursorEnlarge.bind(this));
-            });
+                document.addEventListener('mouseenter', this.toggleCursorVisibility.bind(this));
+                document.addEventListener('mouseleave', this.toggleCursorVisibility.bind(this));
+            }
         },
         toggleCursorVisibility: function() {
             if (this.cursorVisible) {
@@ -411,28 +395,34 @@ document.addEventListener('DOMContentLoaded', function() {
                 this.dotOutline.style.opacity = 0;
             }
         },
-        cursorEnlarge: function() {
-            this.cursorEnlarged = !this.cursorEnlarged;
-            if (this.cursorEnlarged) {
-                this.dot.style.transform = 'translate(-50%, -50%) scale(0.75)';
-                this.dotOutline.style.transform = 'translate(-50%, -50%) scale(1.5)';
-            } else {
-                this.dot.style.transform = 'translate(-50%, -50%) scale(1)';
-                this.dotOutline.style.transform = 'translate(-50%, -50%) scale(1)';
-            }
-        },
         animateDotOutline: function() {
-            this.dotOutlineX += (this.endX - this.dotOutlineX) / 8;
-            this.dotOutlineY += (this.endY - this.dotOutlineY) / 8;
-            this.dotOutline.style.top = this.dotOutlineY + 'px';
-            this.dotOutline.style.left = this.dotOutlineX + 'px';
+            if (window.innerWidth >= 768) {
+                this._x = 0;
+                this._y = 0;
+                this.dot.style.transform = `translate(${this._x}px, ${this._y}px)`;
+                this.dotOutline.style.transform = `translate(${this._x}px, ${this._y}px)`;
 
-            requestAnimationFrame(this.animateDotOutline.bind(this));
+                requestAnimationFrame(this.animateDotOutline.bind(this));
+            }
         }
     };
 
-    // Initialize cursor effect
-    cursor.init();
+    // Initialize cursor only if on desktop
+    if (window.innerWidth >= 768) {
+        cursor.init();
+    }
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+        if (window.innerWidth >= 768 && !document.querySelector('.cursor-dot')) {
+            cursor.init();
+        } else if (window.innerWidth < 768) {
+            const dot = document.querySelector('.cursor-dot');
+            const dotOutline = document.querySelector('.cursor-dot-outline');
+            if (dot) dot.remove();
+            if (dotOutline) dotOutline.remove();
+        }
+    });
 
     // Auto Scroll Button
     const autoScrollBtn = document.getElementById('autoScrollBtn');

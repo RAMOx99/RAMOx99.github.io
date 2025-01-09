@@ -3,11 +3,17 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    cursor: none !important;
     user-select: none;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
+}
+
+/* Only apply cursor: none on desktop */
+@media (min-width: 768px) {
+    * {
+        cursor: none !important;
+    }
 }
 
 /* Root Variables */
@@ -1531,4 +1537,46 @@ footer {
 
 [data-theme="dark"] .auto-scroll-btn:hover {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+}
+
+/* Only apply cursor: none on desktop */
+@media (min-width: 768px) {
+    * {
+        cursor: none !important;
+    }
+}
+
+/* Cursor styles - only visible on desktop */
+@media (min-width: 768px) {
+    .cursor-dot,
+    .cursor-dot-outline {
+        pointer-events: none;
+        position: fixed;
+        z-index: 9999;
+        display: block;
+        will-change: transform;
+    }
+
+    .cursor-dot {
+        width: 8px;
+        height: 8px;
+        background-color: var(--primary-color);
+        border-radius: 50%;
+    }
+
+    .cursor-dot-outline {
+        width: 40px;
+        height: 40px;
+        background-color: rgba(var(--primary-color-rgb), 0.1);
+        border: 2px solid var(--primary-color);
+        border-radius: 50%;
+    }
+}
+
+/* Hide cursor elements on mobile */
+@media (max-width: 767px) {
+    .cursor-dot,
+    .cursor-dot-outline {
+        display: none !important;
+    }
 }
