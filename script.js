@@ -93,8 +93,18 @@ document.addEventListener('DOMContentLoaded', function() {
     // Mobile Navigation Toggle
     const navToggle = document.getElementById('navToggle');
     const navLinks = document.querySelector('.nav-links');
+    
+    // Prevent touch event conflicts
+    navToggle.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        navToggle.classList.toggle('active');
+        navLinks.classList.toggle('active');
+    });
 
-    navToggle.addEventListener('click', () => {
+    navToggle.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         navToggle.classList.toggle('active');
         navLinks.classList.toggle('active');
     });
@@ -109,7 +119,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Close mobile menu when clicking outside
     document.addEventListener('click', (e) => {
-        if (!navToggle.contains(e.target) && !navLinks.contains(e.target)) {
+        const isClickInsideNav = navLinks.contains(e.target);
+        const isClickOnToggle = navToggle.contains(e.target);
+        
+        if (!isClickInsideNav && !isClickOnToggle && navLinks.classList.contains('active')) {
             navToggle.classList.remove('active');
             navLinks.classList.remove('active');
         }
