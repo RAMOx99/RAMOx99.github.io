@@ -1,5 +1,23 @@
 // Wait for the DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
+    // Disable right click
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        return false;
+    });
+
+    // Disable text selection
+    document.addEventListener('selectstart', function(e) {
+        e.preventDefault();
+        return false;
+    });
+
+    // Disable drag and drop
+    document.addEventListener('dragstart', function(e) {
+        e.preventDefault();
+        return false;
+    });
+
     // Initialize AOS (Animate On Scroll)
     AOS.init({
         duration: 800,
@@ -16,35 +34,74 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 500);
     });
 
-    // Dark Mode Toggle
+    // Dark mode toggle
     const darkModeToggle = document.getElementById('darkMode');
-    const theme = localStorage.getItem('theme');
-
-    // Check for saved theme preference
-    if (theme === 'dark') {
+    const darkModeLabel = darkModeToggle.nextElementSibling;
+    
+    // Set initial state
+    if (localStorage.getItem('theme') === 'dark') {
         document.documentElement.setAttribute('data-theme', 'dark');
         darkModeToggle.checked = true;
+        darkModeLabel.setAttribute('aria-checked', 'true');
     }
 
-    // Theme toggle handler
     darkModeToggle.addEventListener('change', function() {
         if (this.checked) {
             document.documentElement.setAttribute('data-theme', 'dark');
             localStorage.setItem('theme', 'dark');
+            darkModeLabel.setAttribute('aria-checked', 'true');
         } else {
             document.documentElement.setAttribute('data-theme', 'light');
             localStorage.setItem('theme', 'light');
+            darkModeLabel.setAttribute('aria-checked', 'false');
         }
+        
+        // Reset and re-trigger skill progress animations
+        const skillBars = document.querySelectorAll('.skill-progress');
+        skillBars.forEach(bar => {
+            bar.classList.remove('animate');
+            // Force reflow
+            void bar.offsetWidth;
+            bar.classList.add('animate');
+        });
+        
+        // Reset progress bars
+        const skillCards = document.querySelectorAll('.skill-card');
+        skillCards.forEach(card => {
+            const progressBar = card.querySelector('.skill-progress');
+            progressBar.style.width = '0';
+            setTimeout(() => {
+                const progress = card.getAttribute('data-progress');
+                progressBar.style.width = progress + '%';
+            }, 100);
+        });
     });
+
+    // Remove the scroll effect code and replace with static navbar styling
+    const navbar = document.querySelector('.navbar');
+    navbar.style.transform = 'translateY(0)';
+    navbar.style.background = 'var(--background-primary)';
+    navbar.style.transition = 'background-color 0.3s ease';
 
     // Mobile Navigation Toggle
     const navToggle = document.getElementById('navToggle');
     const navLinks = document.querySelector('.nav-links');
 
-    navToggle.addEventListener('click', function() {
-        navLinks.classList.toggle('active');
-        this.classList.toggle('active');
-    });
+    if (navToggle && navLinks) {
+        navToggle.addEventListener('click', function() {
+            navLinks.classList.toggle('active');
+            navToggle.classList.toggle('open');
+        });
+
+        // Close menu when a link is clicked
+        const navLinkItems = navLinks.querySelectorAll('a');
+        navLinkItems.forEach(link => {
+            link.addEventListener('click', function() {
+                navLinks.classList.remove('active');
+                navToggle.classList.remove('open');
+            });
+        });
+    }
 
     // Close mobile menu when clicking outside
     document.addEventListener('click', function(event) {
@@ -78,144 +135,114 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Navbar scroll effect
-    const navbar = document.querySelector('.navbar');
-    let lastScrollTop = 0;
-
-    window.addEventListener('scroll', function() {
-        let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        
-        if (scrollTop > lastScrollTop) {
-            // Scrolling down
-            navbar.style.transform = 'translateY(-100%)';
-        } else {
-            // Scrolling up
-            navbar.style.transform = 'translateY(0)';
-        }
-        
-        // Add/remove background when scrolling
-        if (scrollTop > 100) {
-            navbar.style.background = 'var(--background-primary)';
-            navbar.style.boxShadow = '0 2px 10px var(--shadow-color)';
-        } else {
-            navbar.style.background = 'transparent';
-            navbar.style.boxShadow = 'none';
-        }
-        
-        lastScrollTop = scrollTop;
-    });
-
     // Skills progress animation
+    const skillSection = document.querySelector('#skills');
     const skillCards = document.querySelectorAll('.skill-card');
-    
-    const observerOptions = {
-        threshold: 0.5,
-        rootMargin: '0px'
-    };
 
-    const skillObserver = new IntersectionObserver((entries, observer) => {
+    const animateSkills = (entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                const progressBar = entry.target.querySelector('.skill-progress');
-                const progress = entry.target.dataset.progress;
-                progressBar.style.width = `${progress}%`;
-                observer.unobserve(entry.target);
+                skillCards.forEach(card => {
+                    const progress = card.getAttribute('data-progress');
+                    const progressBar = card.querySelector('.skill-progress');
+                    progressBar.style.width = progress + '%';
+                });
             }
         });
-    }, observerOptions);
+    };
 
-    skillCards.forEach(card => skillObserver.observe(card));
+    const skillsObserver = new IntersectionObserver(animateSkills, {
+        threshold: 0.3
+    });
 
-    // Contact Form Handling
+    if (skillSection) {
+        skillsObserver.observe(skillSection);
+    }
+
+    // Typing Effect
+    const typedTextElement = document.querySelector('.typed-text');
+    const phrases = [
+        'Computer Engineer',
+        'Software Developer', 
+        'Tech Innovator',
+        'Problem Solver'
+    ];
+    let phraseIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+
+    function type() {
+        const currentPhrase = phrases[phraseIndex];
+        
+        if (isDeleting) {
+            typedTextElement.textContent = currentPhrase.substring(0, charIndex - 1);
+            charIndex--;
+        } else {
+            typedTextElement.textContent = currentPhrase.substring(0, charIndex + 1);
+            charIndex++;
+        }
+
+        let typeSpeed = isDeleting ? 50 : 100;
+
+        if (!isDeleting && charIndex === currentPhrase.length) {
+            typeSpeed = 2000;
+            isDeleting = true;
+        } else if (isDeleting && charIndex === 0) {
+            isDeleting = false;
+            phraseIndex = (phraseIndex + 1) % phrases.length;
+            typeSpeed = 500;
+        }
+
+        setTimeout(type, typeSpeed);
+    }
+
+    // Start typing effect
+    type();
+
+    // EmailJS Integration
+    emailjs.init("MB9oQKoQHyNfLG1Wl");
+
+    // Contact Form Submission
     const contactForm = document.querySelector('.contact-form');
+    
     if (contactForm) {
         contactForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
-            // Get form data
-            const formData = new FormData(this);
-            const formObject = {};
-            formData.forEach((value, key) => {
-                formObject[key] = value;
-            });
-
-            // Show loading state
-            const submitButton = this.querySelector('button[type="submit"]');
-            const originalText = submitButton.textContent;
-            submitButton.textContent = 'Sending...';
-            submitButton.disabled = true;
-
-            // Simulate form submission (replace with actual API call)
-            setTimeout(() => {
-                // Show success message
-                showNotification('Message sent successfully!', 'success');
-                
-                // Reset form
-                contactForm.reset();
-                
-                // Reset button
-                submitButton.textContent = originalText;
-                submitButton.disabled = false;
-            }, 1500);
-        });
-    }
-
-    // Notification System
-    function showNotification(message, type = 'success') {
-        const notification = document.createElement('div');
-        notification.className = `notification ${type}`;
-        notification.textContent = message;
-        
-        document.body.appendChild(notification);
-        
-        // Trigger animation
-        setTimeout(() => {
-            notification.classList.add('show');
-        }, 100);
-        
-        // Remove notification after 3 seconds
-        setTimeout(() => {
-            notification.classList.remove('show');
-            setTimeout(() => {
-                notification.remove();
-            }, 300);
-        }, 3000);
-    }
-
-    // Typing effect for hero section
-    const typingElement = document.querySelector('.description');
-    if (typingElement) {
-        const text = typingElement.textContent;
-        typingElement.textContent = '';
-        let i = 0;
-
-        function typing() {
-            if (i < text.length) {
-                typingElement.textContent += text.charAt(i);
-                i++;
-                setTimeout(typing, 100);
+            // Check if EmailJS is available
+            if (typeof emailjs === 'undefined') {
+                showNotification('Email service is currently unavailable. Please try again later.', 'error');
+                return;
             }
-        }
 
-        // Start typing animation when element is in view
-        const typingObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    typing();
-                    typingObserver.unobserve(entry.target);
-                }
-            });
-        });
+            // Disable submit button and show loading state
+            const submitBtn = contactForm.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
 
-        typingObserver.observe(typingElement);
-    }
+            // Collect form data
+            const formData = {
+                name: document.querySelector('input[name="name"]').value,
+                email: document.querySelector('input[name="email"]').value,
+                subject: document.querySelector('input[name="subject"]').value,
+                message: document.querySelector('textarea[name="message"]').value
+            };
 
-    // Add parallax effect to hero section
-    const hero = document.querySelector('.hero');
-    if (hero) {
-        window.addEventListener('scroll', function() {
-            const scrolled = window.pageYOffset;
-            hero.style.backgroundPositionY = -(scrolled * 0.5) + 'px';
+            // Send email using EmailJS
+            emailjs.send("service_yflypk7", "template_tfwao1x", formData)
+                .then(function(response) {
+                    // Success
+                    showNotification('Message sent successfully! I will get back to you soon.', 'success');
+                    contactForm.reset();
+                    submitBtn.textContent = 'Send Message';
+                    submitBtn.disabled = false;
+                }, function(error) {
+                    // Error
+                    console.error('EmailJS Error:', error);
+                    showNotification('Failed to send message. Please try again later.', 'error');
+                    submitBtn.textContent = 'Send Message';
+                    submitBtn.disabled = false;
+                });
         });
     }
 
@@ -240,7 +267,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Add CSS for scroll to top button
+    // Add CSS for scroll to top button and notifications
     const style = document.createElement('style');
     style.textContent = `
         .scroll-top-btn {
@@ -282,6 +309,7 @@ document.addEventListener('DOMContentLoaded', function() {
             transform: translateY(100px);
             opacity: 0;
             transition: all 0.3s ease;
+            z-index: 1000;
         }
 
         .notification.show {
@@ -296,6 +324,194 @@ document.addEventListener('DOMContentLoaded', function() {
         .notification.error {
             background: #EF4444;
         }
+
+        .cursor-dot,
+        .cursor-dot-outline {
+            pointer-events: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            border-radius: 50%;
+            opacity: 0;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.3s ease-in-out;
+            z-index: 9999;
+        }
+
+        .cursor-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--primary-color);
+        }
+
+        .cursor-dot-outline {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(var(--primary-color-rgb), 0.1);
+            border: 2px solid var(--primary-color);
+        }
     `;
     document.head.appendChild(style);
+
+    // Mouse cursor effect
+    const cursor = {
+        dot: document.createElement('div'),
+        dotOutline: document.createElement('div'),
+        init: function() {
+            this.dot.classList.add('cursor-dot');
+            this.dotOutline.classList.add('cursor-dot-outline');
+            document.body.appendChild(this.dot);
+            document.body.appendChild(this.dotOutline);
+
+            this.cursorVisible = true;
+            this.cursorEnlarged = false;
+
+            this.endX = window.innerWidth / 2;
+            this.endY = window.innerHeight / 2;
+            this.dotX = this.endX;
+            this.dotY = this.endY;
+            this.dotOutlineX = this.endX;
+            this.dotOutlineY = this.endY;
+
+            this.setupEventListeners();
+            this.animateDotOutline();
+            
+            // Show cursor when initialization is complete
+            setTimeout(() => {
+                this.dot.style.opacity = 1;
+                this.dotOutline.style.opacity = 1;
+            }, 500);
+        },
+        setupEventListeners: function() {
+            document.addEventListener('mousemove', e => {
+                this.cursorVisible = true;
+                this.toggleCursorVisibility();
+                this.endX = e.clientX;
+                this.endY = e.clientY;
+                this.dot.style.top = this.endY + 'px';
+                this.dot.style.left = this.endX + 'px';
+            });
+            document.addEventListener('mouseenter', this.toggleCursorVisibility.bind(this));
+            document.addEventListener('mouseleave', this.toggleCursorVisibility.bind(this));
+            document.addEventListener('mousedown', this.cursorEnlarge.bind(this));
+            document.addEventListener('mouseup', this.cursorEnlarge.bind(this));
+
+            // Add hover effect for clickable elements
+            document.querySelectorAll('a, button, .btn, input[type="submit"]').forEach(el => {
+                el.addEventListener('mouseover', this.cursorEnlarge.bind(this));
+                el.addEventListener('mouseout', this.cursorEnlarge.bind(this));
+            });
+        },
+        toggleCursorVisibility: function() {
+            if (this.cursorVisible) {
+                this.dot.style.opacity = 1;
+                this.dotOutline.style.opacity = 1;
+            } else {
+                this.dot.style.opacity = 0;
+                this.dotOutline.style.opacity = 0;
+            }
+        },
+        cursorEnlarge: function() {
+            this.cursorEnlarged = !this.cursorEnlarged;
+            if (this.cursorEnlarged) {
+                this.dot.style.transform = 'translate(-50%, -50%) scale(0.75)';
+                this.dotOutline.style.transform = 'translate(-50%, -50%) scale(1.5)';
+            } else {
+                this.dot.style.transform = 'translate(-50%, -50%) scale(1)';
+                this.dotOutline.style.transform = 'translate(-50%, -50%) scale(1)';
+            }
+        },
+        animateDotOutline: function() {
+            this.dotOutlineX += (this.endX - this.dotOutlineX) / 8;
+            this.dotOutlineY += (this.endY - this.dotOutlineY) / 8;
+            this.dotOutline.style.top = this.dotOutlineY + 'px';
+            this.dotOutline.style.left = this.dotOutlineX + 'px';
+
+            requestAnimationFrame(this.animateDotOutline.bind(this));
+        }
+    };
+
+    // Initialize cursor effect
+    cursor.init();
+
+    // Auto Scroll Button
+    const autoScrollBtn = document.getElementById('autoScrollBtn');
+    let isScrolling = false;
+    let scrollInterval;
+    let scrollSpeed = 2; // pixels per interval
+
+    function startAutoScroll() {
+        if (!isScrolling) {
+            isScrolling = true;
+            autoScrollBtn.classList.add('scrolling');
+            scrollInterval = setInterval(() => {
+                window.scrollBy({
+                    top: scrollSpeed,
+                    behavior: 'auto'
+                });
+
+                // Check if we've reached the bottom
+                if ((window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight) {
+                    stopAutoScroll();
+                }
+            }, 10);
+        }
+    }
+
+    function stopAutoScroll() {
+        if (isScrolling) {
+            isScrolling = false;
+            autoScrollBtn.classList.remove('scrolling');
+            clearInterval(scrollInterval);
+        }
+    }
+
+    // Touch events for mobile
+    autoScrollBtn.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        startAutoScroll();
+    });
+
+    autoScrollBtn.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        stopAutoScroll();
+    });
+
+    // Mouse events for desktop
+    autoScrollBtn.addEventListener('mousedown', startAutoScroll);
+    autoScrollBtn.addEventListener('mouseup', stopAutoScroll);
+    autoScrollBtn.addEventListener('mouseleave', stopAutoScroll);
+
+    // Stop scrolling when user manually scrolls
+    document.addEventListener('wheel', stopAutoScroll);
+    document.addEventListener('touchmove', stopAutoScroll);
+
+    // Adjust scroll speed based on page height
+    function updateScrollSpeed() {
+        const pageHeight = document.documentElement.scrollHeight;
+        scrollSpeed = Math.max(1, Math.min(5, pageHeight / 5000));
+    }
+
+    window.addEventListener('resize', updateScrollSpeed);
+    updateScrollSpeed(); // Initial speed calculation
+
+    // Notification System
+    function showNotification(message, type = 'success') {
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.textContent = message;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.classList.add('show');
+        }, 100);
+        
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => {
+                notification.remove();
+            }, 300);
+        }, 3000);
+    }
 });

@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Omar Abdelghany Mohamed - Portfolio</title>
+    <title>Omar Abdelghany - Portfolio</title>
     
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <link rel="icon" type="image/webp" href="assets/logo.webp">
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -19,6 +19,8 @@
     
     <!-- Custom CSS -->
     <link rel="stylesheet" href="styles.css">
+
+
 </head>
 <body>
     <!-- Preloader -->
@@ -30,15 +32,23 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="logo">
-                <a href="#home">OA</a>
+                <a href="#home">
+                    <img src="assets/logo.webp" alt="Omar Abdelghany Logo" class="logo-img">
+                </a>
             </div>
             
             <div class="nav-elements">
-                <div class="theme-toggle">
-                    <input type="checkbox" id="darkMode" class="dark-mode-input">
-                    <label for="darkMode" class="dark-mode-label">
-                        <i class="fas fa-sun"></i>
-                        <i class="fas fa-moon"></i>
+                <div class="theme-toggle" data-tooltip="Toggle Light/Dark Mode">
+                    <input type="checkbox" id="darkMode" class="dark-mode-input" aria-label="Toggle dark mode">
+                    <label for="darkMode" class="dark-mode-label" role="switch" aria-checked="false">
+                        <svg class="sun" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42M17 12a5 5 0 11-10 0 5 5 0 0110 0z"/>
+                        </svg>
+                        <svg class="moon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                        </svg>
                     </label>
                 </div>
 
@@ -63,30 +73,53 @@
     <!-- Hero Section -->
     <section id="home" class="hero">
         <div class="container">
-            <div class="hero-content" data-aos="fade-up">
-                <div class="hero-text">
-                    <h1>Omar Abdelghany Mohamed</h1>
-                    <p class="subtitle">Aspiring Computer Engineer</p>
-                    <p class="description">Transforming ideas into innovative solutions</p>
-                    <div class="cta-buttons">
-                        <a href="#contact" class="btn primary-btn">Get in Touch</a>
-                        <a href="#" class="btn secondary-btn">Download CV</a>
+            <div class="hero-wrapper">
+                <div class="hero-content" data-aos="fade-up">
+                    <div class="hero-intro">
+                        <span class="hero-greeting">Hello, I'm</span>
+                        <h1 class="hero-name">Omar Abdelghany</h1>
+                        <div class="hero-typed-container">
+                            <span class="hero-typed-text">
+                                <span class="typed-cursor">|</span>
+                                <span class="typed-text"></span>
+                            </span>
+                        </div>
                     </div>
-                </div>
-                <div class="social-links">
-                    <a href="#" class="social-icon" target="_blank"><i class="fab fa-github"></i></a>
-                    <a href="#" class="social-icon" target="_blank"><i class="fab fa-linkedin"></i></a>
-                    <a href="#" class="social-icon" target="_blank"><i class="fab fa-twitter"></i></a>
+                    <p class="hero-description">
+                        A passionate Computer Engineer transforming complex challenges into innovative technological solutions. 
+                        Bridging the gap between theoretical knowledge and practical implementation.
+                    </p>
+                    <div class="hero-cta">
+                        <div class="cta-buttons">
+                            <a href="#contact" class="btn primary-btn contact-btn">Get in Touch</a>
+                            <a href="cv.pdf" download class="btn secondary-btn">Download CV</a>
+                        </div>
+                        <div class="hero-socials">
+                            <a href="https://github.com/OmarAbdelghany" class="social-link github" target="_blank">
+                                <i class="fab fa-github"></i>
+                            </a>
+                            <a href="https://www.linkedin.com/in/omar-abdelghany" class="social-link linkedin" target="_blank">
+                                <i class="fab fa-linkedin"></i>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="scroll-indicator">
-            <div class="mouse"></div>
+        <div class="hero-background-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
         </div>
     </section>
 
     <!-- About Section -->
     <section id="about" class="about">
+        <div class="section-shapes">
+            <div class="section-shape"></div>
+            <div class="section-shape"></div>
+            <div class="section-shape"></div>
+        </div>
         <div class="container">
             <h2 class="section-title" data-aos="fade-up">About Me</h2>
             <div class="about-content">
@@ -99,7 +132,7 @@
                         </div>
                         <div class="detail-item">
                             <i class="fas fa-envelope"></i>
-                            <span>omarabdelghany177@gmail.com</span>
+                            <span>o.abdelghany.dev@gmail.com</span>
                         </div>
                         <div class="detail-item">
                             <i class="fas fa-phone"></i>
@@ -127,23 +160,40 @@
 
     <!-- Education Section -->
     <section id="education" class="education">
+        <div class="section-shapes">
+            <div class="section-shape"></div>
+            <div class="section-shape"></div>
+            <div class="section-shape"></div>
+        </div>
         <div class="container">
             <h2 class="section-title" data-aos="fade-up">Education</h2>
-            <div class="timeline">
-                <div class="timeline-item" data-aos="fade-right">
-                    <div class="timeline-content">
+            <div class="education-grid">
+                <div class="education-card" data-aos="zoom-in">
+                    <div class="education-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div class="education-content">
                         <h3>Borj Al-Arab Technological University</h3>
-                        <p class="timeline-date">2024 - Present</p>
-                        <p>Bachelor of Science in Information Technology</p>
-                        <p>First Academic Year</p>
+                        <p class="education-degree">Bachelor of Science in Information Technology</p>
+                        <div class="education-details">
+                            <span class="education-date">2024 - Present</span>
+                            <span class="education-status">Ongoing</span>
+                        </div>
+                        <p class="education-description">Pursuing a comprehensive degree in Information Technology, focusing on cutting-edge technological innovations and practical applications.</p>
                     </div>
                 </div>
-                <div class="timeline-item" data-aos="fade-left">
-                    <div class="timeline-content">
+                <div class="education-card" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="education-icon">
+                        <i class="fas fa-award"></i>
+                    </div>
+                    <div class="education-content">
                         <h3>HST Applied Technology School</h3>
-                        <p class="timeline-date">Graduated 2024</p>
-                        <p>Artificial Intelligence Department</p>
-                        <p>GPA: 4.0/4.0</p>
+                        <p class="education-degree">Artificial Intelligence Department</p>
+                        <div class="education-details">
+                            <span class="education-date">Graduated 2024</span>
+                            <span class="education-status">Completed</span>
+                        </div>
+                        <p class="education-description">Specialized in Artificial Intelligence with an exceptional academic performance, maintaining a perfect 4.0/4.0 GPA.</p>
                     </div>
                 </div>
             </div>
@@ -152,11 +202,19 @@
 
     <!-- Experience Section -->
     <section id="experience" class="experience">
+        <div class="section-shapes">
+            <div class="section-shape"></div>
+            <div class="section-shape"></div>
+            <div class="section-shape"></div>
+        </div>
         <div class="container">
             <h2 class="section-title" data-aos="fade-up">Experience</h2>
             <div class="timeline">
                 <div class="timeline-item" data-aos="fade-right">
                     <div class="timeline-content">
+                        <div class="timeline-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
                         <h3>H-Logic Security Technology</h3>
                         <p class="timeline-date">Summer 2023</p>
                         <p class="company-desc">Egyptian International Intelligent Security Systems Co. LTD</p>
@@ -169,8 +227,11 @@
                 </div>
                 <div class="timeline-item" data-aos="fade-left">
                     <div class="timeline-content">
+                        <div class="timeline-icon">
+                            <i class="fas fa-fingerprint"></i>
+                        </div>
                         <h3>ZKTeco</h3>
-                        <p class="timeline-date">2024</p>
+                        <p class="timeline-date">Feb 2024 - Mar 2024</p>
                         <p class="company-desc">Global leader in biometric and security technology</p>
                         <ul>
                             <li>Trained on installing access control systems</li>
@@ -181,6 +242,25 @@
                 </div>
                 <div class="timeline-item" data-aos="fade-right">
                     <div class="timeline-content">
+                        <div class="timeline-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <h3>Digital Egypt Cubs Initiative</h3>
+                        <p class="timeline-date">Jan 2023 - Oct 2023</p>
+                        <p class="company-desc">The Digital Egypt Cubs Initiative (DECI) is a program that trains young Egyptians in digital skills like AI, software development, and cybersecurity to prepare them for future jobs.</p>
+                        <ul>
+                            <li>Gained hands-on experience in Artificial Intelligence, Robotics, and Software Development</li>
+                            <li>Developed skills in Data Science for analyzing and interpreting data</li>
+                            <li>Strengthened Leadership and Teamwork abilities through collaborative projects</li>
+                            <li>Enhanced problem-solving and technical proficiency in Network Security</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="timeline-item" data-aos="fade-left">
+                    <div class="timeline-content">
+                        <div class="timeline-icon">
+                            <i class="fas fa-laptop-code"></i>
+                        </div>
                         <h3>Freelance IT Specialist</h3>
                         <p class="timeline-date">2022 - Present</p>
                         <ul>
@@ -194,9 +274,15 @@
             </div>
         </div>
     </section>
+    
 
     <!-- Skills Section -->
     <section id="skills" class="skills">
+        <div class="section-shapes">
+            <div class="section-shape"></div>
+            <div class="section-shape"></div>
+            <div class="section-shape"></div>
+        </div>
         <div class="container">
             <h2 class="section-title" data-aos="fade-up">Skills</h2>
             
@@ -204,35 +290,35 @@
             <div class="skills-category" data-aos="fade-up">
                 <h3>Programming Languages</h3>
                 <div class="skills-grid">
-                    <div class="skill-card" data-progress="90">
+                    <div class="skill-card" data-progress="95">
                         <i class="fab fa-python"></i>
                         <h4>Python</h4>
                         <div class="skill-level">
                             <div class="skill-progress"></div>
                         </div>
                     </div>
-                    <div class="skill-card" data-progress="85">
+                    <div class="skill-card" data-progress="90">
                         <i class="fas fa-code"></i>
                         <h4>C++</h4>
                         <div class="skill-level">
                             <div class="skill-progress"></div>
                         </div>
                     </div>
-                    <div class="skill-card" data-progress="70">
+                    <div class="skill-card" data-progress="85">
                         <i class="fab fa-html5"></i>
                         <h4>HTML</h4>
                         <div class="skill-level">
                             <div class="skill-progress"></div>
                         </div>
                     </div>
-                    <div class="skill-card" data-progress="65">
+                    <div class="skill-card" data-progress="70">
                         <i class="fab fa-css3-alt"></i>
                         <h4>CSS</h4>
                         <div class="skill-level">
                             <div class="skill-progress"></div>
                         </div>
                     </div>
-                    <div class="skill-card" data-progress="60">
+                    <div class="skill-card" data-progress="67">
                         <i class="fab fa-js"></i>
                         <h4>JavaScript</h4>
                         <div class="skill-level">
@@ -242,11 +328,13 @@
                 </div>
             </div>
 
-            <!-- Microsoft Office Skills -->
+
+
+            <!-- Other Skills -->
             <div class="skills-category" data-aos="fade-up">
-                <h3>Microsoft Office</h3>
+                <h3>Other Skills</h3>
                 <div class="skills-grid">
-                    <div class="skill-card" data-progress="95">
+                    <div class="skill-card" data-progress="98">
                         <i class="fas fa-file-excel"></i>
                         <h4>Excel</h4>
                         <div class="skill-level">
@@ -254,14 +342,8 @@
                         </div>
                         <p>PivotTables, Advanced Formulas, Excel 365</p>
                     </div>
-                </div>
-            </div>
 
-            <!-- Networking Skills -->
-            <div class="skills-category" data-aos="fade-up">
-                <h3>Networking</h3>
-                <div class="skills-grid">
-                    <div class="skill-card" data-progress="85">
+                    <div class="skill-card" data-progress="90">
                         <i class="fas fa-network-wired"></i>
                         <h4>CCNA</h4>
                         <div class="skill-level">
@@ -271,12 +353,13 @@
                     </div>
                 </div>
             </div>
+        
 
             <!-- Software Development -->
             <div class="skills-category" data-aos="fade-up">
-                <h3>Software Development</h3>
+                
                 <div class="skills-grid">
-                    <div class="skill-card" data-progress="80">
+                    <div class="skill-card" data-progress="94">
                         <i class="fas fa-laptop-code"></i>
                         <h4>Problem Solving</h4>
                         <div class="skill-level">
@@ -292,11 +375,19 @@
                     </div>
                 </div>
             </div>
-        </div>
+
+        
+
+
     </section>
 
     <!-- Contact Section -->
     <section id="contact" class="contact">
+        <div class="section-shapes">
+            <div class="section-shape"></div>
+            <div class="section-shape"></div>
+            <div class="section-shape"></div>
+        </div>
         <div class="container">
             <h2 class="section-title" data-aos="fade-up">Get in Touch</h2>
             <div class="contact-content">
@@ -305,7 +396,7 @@
                         <i class="fas fa-envelope"></i>
                         <div>
                             <h4>Email</h4>
-                            <p>omarabdelghany177@gmail.com</p>
+                            <p>o.abdelghany.dev@gmail.com</p>
                         </div>
                     </div>
                     <div class="contact-item">
@@ -325,25 +416,32 @@
                 </div>
                 <form class="contact-form" data-aos="fade-left">
                     <div class="form-group">
-                        <input type="text" placeholder="Your Name" required>
+                        <input type="text" name="name" placeholder="Your Name" required>
                     </div>
                     <div class="form-group">
-                        <input type="email" placeholder="Your Email" required>
+                        <input type="email" name="email" placeholder="Your Email" required>
                     </div>
                     <div class="form-group">
-                        <input type="text" placeholder="Subject" required>
+                        <input type="text" name="subject" placeholder="Subject" required>
                     </div>
                     <div class="form-group">
-                        <textarea placeholder="Your Message" required></textarea>
+                        <textarea name="message" placeholder="Your Message" required></textarea>
                     </div>
                     <button type="submit" class="btn primary-btn">Send Message</button>
                 </form>
+                <div class="contact-buttons" data-aos="fade-up">
+                </div>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
     <footer>
+        <div class="section-shapes">
+            <div class="section-shape"></div>
+            <div class="section-shape"></div>
+            <div class="section-shape"></div>
+        </div>
         <div class="container">
             <div class="footer-content">
                 <div class="footer-logo">
@@ -351,9 +449,8 @@
                     <p>Aspiring Computer Engineer</p>
                 </div>
                 <div class="footer-social">
-                    <a href="#" class="social-icon" target="_blank"><i class="fab fa-github"></i></a>
-                    <a href="#" class="social-icon" target="_blank"><i class="fab fa-linkedin"></i></a>
-                    <a href="#" class="social-icon" target="_blank"><i class="fab fa-twitter"></i></a>
+                    <a href="https://github.com/OmarAbdelghany" class="social-icon" target="_blank"><i class="fab fa-github"></i></a>
+                    <a href="https://www.linkedin.com/in/omar-abdelghany" class="social-icon" target="_blank"><i class="fab fa-linkedin"></i></a>
                 </div>
             </div>
             <div class="footer-bottom">
@@ -364,6 +461,10 @@
 
     <!-- Scripts -->
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <!-- EmailJS -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <!-- Custom Script -->
     <script src="script.js"></script>
+
 </body>
 </html>
