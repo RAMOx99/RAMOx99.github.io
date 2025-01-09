@@ -544,15 +544,10 @@ body::before {
     color: var(--primary-color);
 }
 
-/* Hide default cursor */
-* {
-    cursor: none !important;
-}
-
-/* Only show default cursor on touch devices */
-@media (hover: none) and (pointer: coarse) {
+/* Hide default cursor on desktop only */
+@media (hover: hover) and (pointer: fine) {
     * {
-        cursor: auto !important;
+        cursor: none !important;
     }
 }
 
@@ -567,21 +562,28 @@ body::before {
     border-radius: 50%;
     opacity: 1;
     transition: opacity 0.3s ease-in-out;
+    z-index: 9999;
 }
 
 .cursor-dot {
     width: 8px;
     height: 8px;
     background: var(--primary-color);
-    z-index: 1001;
 }
 
 .cursor-dot-outline {
     width: 40px;
     height: 40px;
     background: rgba(var(--primary-rgb), 0.1);
-    z-index: 1000;
     transition: transform 0.2s ease-in-out;
+}
+
+/* Hide custom cursor on mobile/touch devices */
+@media (hover: none) and (pointer: coarse) {
+    .cursor-dot,
+    .cursor-dot-outline {
+        display: none !important;
+    }
 }
 
 /* Cursor hover effects */
@@ -603,21 +605,11 @@ body::before {
 .cursor-click .cursor-dot {
     transform: translate(-50%, -50%) scale(0.5);
     background: var(--primary-color);
-    transition: transform 0.1s ease-in-out;
 }
 
 .cursor-click .cursor-dot-outline {
     transform: translate(-50%, -50%) scale(0.7);
     background: rgba(var(--primary-rgb), 0.4);
-    transition: transform 0.1s ease-in-out;
-}
-
-/* Hide cursor on touch devices */
-@media (hover: none) and (pointer: coarse) {
-    .cursor-dot,
-    .cursor-dot-outline {
-        display: none;
-    }
 }
 
 /* Add hover effect to all interactive elements */
@@ -633,7 +625,6 @@ textarea:hover ~ .cursor-dot,
 .nav-toggle:hover ~ .cursor-dot,
 .theme-toggle:hover ~ .cursor-dot {
     transform: translate(-50%, -50%) scale(1.5);
-    background: var(--primary-color);
 }
 
 a:hover ~ .cursor-dot-outline,
@@ -644,7 +635,6 @@ textarea:hover ~ .cursor-dot-outline,
 .nav-toggle:hover ~ .cursor-dot-outline,
 .theme-toggle:hover ~ .cursor-dot-outline {
     transform: translate(-50%, -50%) scale(1.8);
-    background: rgba(var(--primary-rgb), 0.3);
 }
 
 /* Hero Description */

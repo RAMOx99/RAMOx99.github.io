@@ -409,17 +409,23 @@ document.addEventListener('DOMContentLoaded', function() {
         cursorEnlarged: false,
         
         init: function() {
+            // Check if it's a touch device
+            if (window.matchMedia('(hover: none) and (pointer: coarse)').matches) {
+                return; // Don't initialize cursor on touch devices
+            }
+
             // Create cursor elements
             this.dot.classList.add('cursor-dot');
             this.dotOutline.classList.add('cursor-dot-outline');
             document.body.appendChild(this.dot);
             document.body.appendChild(this.dotOutline);
 
-            // Variables
-            this.endX = window.innerWidth / 2;
-            this.endY = window.innerHeight / 2;
-            this.cursorVisible = true;
-            this.cursorEnlarged = false;
+            // Set initial position
+            const initEvent = new MouseEvent('mousemove', {
+                clientX: window.innerWidth / 2,
+                clientY: window.innerHeight / 2
+            });
+            this.cursorMove(initEvent);
 
             // Event Listeners
             document.addEventListener('mousemove', e => this.cursorMove(e));
@@ -515,7 +521,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-    // Initialize cursor effect
+    // Initialize cursor
     cursor.init();
 
     // Initialize scroll animations
